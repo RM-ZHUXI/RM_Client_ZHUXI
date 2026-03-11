@@ -30,15 +30,15 @@
 
 ### 1. 安装依赖
 
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 ### 2. 开发模式运行
 
-\`\`\`bash
+```bash
 npm start
-\`\`\`
+```
 
 这将启动 Electron Forge 的开发服务器，支持热重载。
 
@@ -46,9 +46,9 @@ npm start
 
 构建 Windows 安装包：
 
-\`\`\`bash
+```bash
 npm run make
-\`\`\`
+```
 
 生成的安装包位于 `out/make` 目录。
 
