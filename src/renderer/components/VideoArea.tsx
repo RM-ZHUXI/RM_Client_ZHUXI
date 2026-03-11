@@ -26,6 +26,7 @@ const VideoArea: React.FC = () => {
   // WebCodecs VideoDecoder
   const decoderRef = useRef<VideoDecoder | null>(null);
   const frameBufferRef = useRef<Uint8Array>(new Uint8Array(0));
+  const receivedKeyFrameRef = useRef<boolean>(false);
 
   // 详细的格式检测
   const detectDetailedFormat = (data: Buffer): FormatInfo => {
@@ -176,9 +177,16 @@ const VideoArea: React.FC = () => {
         if (nalUnitType === 32 || nalUnitType === 33 || nalUnitType === 34 ||
             (nalUnitType >= 16 && nalUnitType <= 21)) {
           frameType = 'key';
+          receivedKeyFrameRef.current = true;
         }
 
         console.log('[HEVC] NAL 单元类型:', nalUnitType, '帧类型:', frameType, '数据大小:', data.length);
+      }
+
+      // 如果还没收到关键帧，跳过 delta 帧
+      if (!receivedKeyFrameRef.current && frameType === 'delta') {
+        console.log('[HEVC] ⏭️ 跳过 delta 帧，等待关键帧');
+        return;
       }
 
       const chunk = new EncodedVideoChunk({
