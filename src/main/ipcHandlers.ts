@@ -1,7 +1,7 @@
-import { ipcMain, BrowserWindow } from 'electron';
+import { ipcMain, BrowserWindow, app } from 'electron';
 import { startUdpVideoServer, stopUdpVideoServer, isUdpServerRunning } from './udpVideoServer';
 import { getConfig, setConfig } from './configStore';
-import { connectMqtt, disconnectMqtt } from './mqttService';
+import { connectMqtt, disconnectMqtt, publishMqtt } from './mqttService';
 import { ConnectionConfig } from '../renderer/types/messages';
 
 export function registerIpcHandlers(mainWindow: BrowserWindow | null) {
@@ -65,5 +65,20 @@ export function registerIpcHandlers(mainWindow: BrowserWindow | null) {
     } catch (error) {
       return { success: false, error: (error as Error).message };
     }
+  });
+
+  // MQTT 发布消息
+  ipcMain.handle('mqtt:publish', async (_event, topic: string, data: any) => {
+    try {
+      publishMqtt(topic, data);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
+
+  // 退出应用
+  ipcMain.handle('app:quit', async () => {
+    app.quit();
   });
 }
