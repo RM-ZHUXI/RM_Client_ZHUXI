@@ -1,26 +1,37 @@
-import React from 'react';
-import ConnectionBar from './components/ConnectionBar';
+import React, { useState } from 'react';
 import VideoArea from './components/VideoArea';
-import DataPanel from './components/DataPanel';
+import ControlPanel from './components/ControlPanel';
 
 const App: React.FC = () => {
+  const [showPanel, setShowPanel] = useState(false);
+
   return (
     <div style={styles.container}>
-      <ConnectionBar />
       <VideoArea />
-      <DataPanel />
+      <div
+        style={styles.trigger}
+        onMouseEnter={() => setShowPanel(true)}
+      />
+      <ControlPanel visible={showPanel} onClose={() => setShowPanel(false)} />
     </div>
   );
 };
 
 const styles: Record<string, React.CSSProperties> = {
   container: {
-    display: 'flex',
-    flexDirection: 'column',
+    position: 'relative',
+    width: '100vw',
     height: '100vh',
-    backgroundColor: '#1e1e1e',
-    color: '#fff',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    overflow: 'hidden',
+    backgroundColor: '#000',
+  },
+  trigger: {
+    position: 'fixed',
+    left: 0,
+    top: 0,
+    width: '20px',
+    height: '100vh',
+    zIndex: 999,
   },
 };
 

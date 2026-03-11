@@ -283,78 +283,14 @@ const VideoArea: React.FC = () => {
 
   return (
     <div style={styles.container}>
-      <div style={styles.header}>
-        <h3 style={styles.title}>视频流</h3>
+      <canvas
+        ref={canvasRef}
+        style={styles.canvas}
+      />
+      <div style={styles.overlay}>
         <div style={styles.stats}>
-          <span>FPS: {fps}</span>
-          <span style={{ marginLeft: '16px' }}>总帧数: {frameCount}</span>
-          <span style={{ marginLeft: '16px' }}>数据: {(dataSize / 1024).toFixed(1)}KB</span>
-          <span style={{ marginLeft: '16px' }}>
-            格式: <span style={{
-              color: formatInfo.type === 'hevc' ? '#4caf50' :
-                     formatInfo.type === 'unknown' ? '#f44336' : '#ff9800'
-            }}>
-              {formatInfo.type === 'hevc' ? 'HEVC' : formatInfo.type.toUpperCase()}
-            </span>
-          </span>
-          {formatInfo.type === 'hevc' && (
-            <span style={{
-              marginLeft: '16px',
-              color: decoderStatus === 'ready' ? '#4caf50' :
-                     decoderStatus === 'error' ? '#f44336' : '#ff9800'
-            }}>
-              解码器: {decoderStatus === 'ready' ? '就绪' :
-                       decoderStatus === 'initializing' ? '初始化中' :
-                       decoderStatus === 'error' ? '错误' : '未初始化'}
-            </span>
-          )}
+          FPS: {fps} | 帧数: {frameCount}
         </div>
-      </div>
-      <div style={styles.videoContainer}>
-        {videoStatus === 'connected' ? (
-          <>
-            <canvas
-              ref={canvasRef}
-              width={640}
-              height={480}
-              style={styles.canvas}
-            />
-
-            {formatInfo.type === 'hevc' && decoderStatus === 'error' && (
-              <div style={styles.errorPanel}>
-                <h4 style={styles.errorTitle}>⚠️ HEVC 解码器错误</h4>
-                <div style={styles.errorContent}>
-                  <p>{decoderError}</p>
-                  <p style={{ marginTop: '10px' }}>可能的解决方案：</p>
-                  <ul style={{ textAlign: 'left', marginLeft: '20px' }}>
-                    <li>使用 Chrome 94+ 或 Edge 94+ 浏览器</li>
-                    <li>确保浏览器支持硬件加速</li>
-                    <li>尝试重启应用</li>
-                  </ul>
-                </div>
-              </div>
-            )}
-
-            {formatInfo.type === 'hevc' && decoderStatus !== 'error' && (
-              <div style={styles.statusPanel}>
-                {getStatusText()}
-              </div>
-            )}
-          </>
-        ) : (
-          <div style={styles.placeholder}>
-            <div style={styles.placeholderText}>
-              {videoStatus === 'disconnected'
-                ? '视频流未启动'
-                : videoStatus === 'connecting'
-                ? '正在启动...'
-                : '启动失败'}
-            </div>
-            <div style={styles.placeholderHint}>
-              点击上方"开始接收"按钮启动视频流
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -362,97 +298,44 @@ const VideoArea: React.FC = () => {
 
 const styles: Record<string, React.CSSProperties> = {
   container: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: '#1e1e1e',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '12px 16px',
-    borderBottom: '1px solid #444',
-  },
-  title: {
-    margin: 0,
-    fontSize: '14px',
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  stats: {
-    fontSize: '12px',
-    color: '#888',
-    fontFamily: 'monospace',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  videoContainer: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: '#000',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000',
-    padding: '16px',
-    position: 'relative',
-    overflow: 'hidden',
   },
   canvas: {
-    maxWidth: '100%',
-    maxHeight: '100%',
-    border: '1px solid #444',
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
   },
-  statusPanel: {
-    position: 'absolute',
-    bottom: '16px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    border: '1px solid #4caf50',
-    borderRadius: '4px',
-    padding: '8px 16px',
-    color: '#4caf50',
-    fontSize: '12px',
-    fontFamily: 'monospace',
-  },
-  errorPanel: {
+  placeholder: {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    backgroundColor: 'rgba(0,0,0,0.9)',
-    border: '2px solid #f44336',
-    borderRadius: '8px',
-    padding: '20px',
-    maxWidth: '500px',
     textAlign: 'center',
   },
-  errorTitle: {
-    margin: '0 0 12px 0',
-    fontSize: '16px',
-    color: '#f44336',
-  },
-  errorContent: {
-    fontSize: '13px',
-    color: '#fff',
-    lineHeight: '1.6',
-  },
-  placeholder: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
-  },
   placeholderText: {
-    color: '#888',
-    fontSize: '16px',
-    marginBottom: '8px',
-  },
-  placeholderHint: {
     color: '#666',
-    fontSize: '12px',
+    fontSize: '24px',
+  },
+  overlay: {
+    position: 'absolute',
+    bottom: '20px',
+    right: '20px',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    padding: '8px 16px',
+    borderRadius: '4px',
+  },
+  stats: {
+    color: '#fff',
+    fontSize: '14px',
+    fontFamily: 'monospace',
   },
 };
 
