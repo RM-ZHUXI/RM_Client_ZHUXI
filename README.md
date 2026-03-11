@@ -77,7 +77,7 @@ npm run make
 
 ## 项目结构
 
-\`\`\`
+```
 robomaster-client-native/
 ├── src/
 │   ├── main/                    # 主进程
@@ -108,7 +108,7 @@ robomaster-client-native/
 ├── tsconfig.json
 ├── forge.config.ts              # Electron Forge 配置
 └── README.md
-\`\`\`
+```
 
 ## 支持的消息类型
 
