@@ -3,6 +3,11 @@ import path from 'path';
 import { startUdpVideoServer, stopUdpVideoServer } from './udpVideoServer';
 import { registerIpcHandlers } from './ipcHandlers';
 
+// 修复 Windows 控制台中文乱码
+if (process.platform === 'win32') {
+  process.stdout.setDefaultEncoding('utf8');
+}
+
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
