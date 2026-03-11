@@ -1,4 +1,4 @@
-# RoboMaster 2026 客户端 (Electron 原生版)
+# RoboMaster 2026 客户端 (RM_Client_ZHUXI)
 
 一个原生桌面客户端，用于对接 SharkDataSever 服务端，实时接收、解析并显示比赛数据与视频流。
 
