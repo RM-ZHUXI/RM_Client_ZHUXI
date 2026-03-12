@@ -1,7 +1,7 @@
 # RoboMaster 2026 客户端 - 项目完成报告
 
 ## 📅 完成日期
-2026-03-11
+2026-03-12
 
 ## ✅ 项目状态
 **全部功能已完成并测试通过**
@@ -57,7 +57,7 @@
 - **UDP**: Node.js dgram
 
 ### 构建工具
-- **打包**: Electron Forge
+- **打包**: electron-builder
 - **编译**: Webpack + TypeScript
 
 ---
@@ -136,10 +136,12 @@ npm start
 
 ### 打包应用
 ```bash
-npm run make
+npm run dist:win
 ```
 
-生成的可执行文件位于 `out/make/` 目录
+生成的文件位于 `out/` 目录：
+- `RoboMaster 2026 Client-Setup-1.0.0.exe` - NSIS 安装程序
+- `RoboMaster 2026 Client-1.0.0-win.zip` - ZIP 便携版
 
 ### 使用步骤
 1. 启动 SharkDataSever
@@ -260,6 +262,6 @@ Renderer → IPC → Main → MQTT Server
 
 ---
 
-**项目版本**: v1.4.0 (Final)
+**项目版本**: v1.2.0 (Final)
 **开发者**: Claude + User
-**完成日期**: 2026-03-11
+**完成日期**: 2026-03-12

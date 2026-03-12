@@ -5,7 +5,7 @@
 ## 项目概述
 
 **项目名称**: RoboMaster 2026 客户端 (RM_Client_ZHUXI)
-**技术栈**: Electron + React + TypeScript
+**技术栈**: Electron + React + TypeScript + electron-builder
 **用途**: 对接 SharkDataSever，实时接收并显示比赛数据与视频流
 
 ## 核心功能
@@ -88,8 +88,22 @@ SharkDataSever → MQTT → Main Process → IPC → Renderer → UI
 ```bash
 npm install          # 安装依赖
 npm start           # 开发模式
-npm run make        # 打包应用
+npm run build       # 编译代码
+npm run dist:win    # 打包 Windows 安装程序
 ```
+
+## 打包配置
+
+**electron-builder 配置** (package.json):
+- 输出目录: `out/`
+- Windows 目标: NSIS 安装程序 + ZIP 压缩包
+- NSIS: 支持自定义安装路径，自动创建桌面和开始菜单快捷方式
+- ZIP: 便携版，解压即用
+
+**Webpack 配置**:
+- `webpack.main.config.ts` - Main 进程编译到 `dist/main/`
+- `webpack.preload.config.ts` - Preload 编译到 `dist/preload/`
+- `webpack.renderer.config.ts` - Renderer 编译到 `dist/renderer/`
 
 ## 配置
 
