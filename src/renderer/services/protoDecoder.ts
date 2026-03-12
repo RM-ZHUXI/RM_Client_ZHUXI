@@ -228,6 +228,14 @@ export function decodeMessage(topic: string, buffer: Uint8Array | Buffer): any {
     throw new Error('Protobuf decoder not initialized');
   }
 
+  // 跳过上行消息类型
+  const upstreamTypes = [
+    'RemoteControl', 'MapClickInfoNotify', 'AssemblyCommand',
+    'RobotPerformanceSelectionCommand', 'HeroDeployModeEventCommand',
+    'RuneActivateCommand', 'DartCommand', 'GuardCtrlCommand', 'AirSupportCommand'
+  ];
+  if (upstreamTypes.includes(topic)) return null;
+
   try {
     // 主题名就是消息类型，添加包名前缀
     const fullTypeName = `rm_client_down.${topic}`;

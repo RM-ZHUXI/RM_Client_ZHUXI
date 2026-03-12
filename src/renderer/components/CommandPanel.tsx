@@ -35,13 +35,13 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose }) => {
 
     const interval = setInterval(() => {
       const data = {
-        mouse_x: mouseState.current.x,
-        mouse_y: mouseState.current.y,
-        mouse_z: mouseState.current.z,
-        left_button_down: mouseState.current.left,
-        right_button_down: mouseState.current.right,
-        keyboard_value: keyboardState.current,
-        mid_button_down: mouseState.current.mid,
+        mouseX: mouseState.current.x,
+        mouseY: mouseState.current.y,
+        mouseZ: mouseState.current.z,
+        leftButtonDown: mouseState.current.left,
+        rightButtonDown: mouseState.current.right,
+        keyboardValue: keyboardState.current,
+        midButtonDown: mouseState.current.mid,
         data: new Uint8Array(0)
       };
 
@@ -275,7 +275,7 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose }) => {
           </label>
           <button
             style={styles.button}
-            onClick={() => sendCommand('DartCommand', { target_id: dartTarget, open: dartOpen })}
+            onClick={() => sendCommand('DartCommand', { targetId: dartTarget, open: dartOpen })}
           >
             发送
           </button>
@@ -293,7 +293,7 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose }) => {
           />
           <button
             style={styles.button}
-            onClick={() => sendCommand('GuardCtrlCommand', { command_id: guardCmd })}
+            onClick={() => sendCommand('GuardCtrlCommand', { commandId: guardCmd })}
           >
             发送
           </button>
@@ -309,7 +309,7 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose }) => {
           </select>
           <button
             style={styles.button}
-            onClick={() => sendCommand('AirSupportCommand', { command_id: airCmd })}
+            onClick={() => sendCommand('AirSupportCommand', { commandId: airCmd })}
           >
             发送
           </button>
@@ -344,16 +344,16 @@ const MapOverlay: React.FC<{ onClose: () => void; onSend: (topic: string, data: 
     const mapY = (y / rect.height) * 15;
 
     onSend('MapClickInfoNotify', {
-      is_send_all: 1,
-      robot_id: new Uint8Array(7),
+      isSendAll: 1,
+      robotId: new Uint8Array(7),
       mode: 1,
-      enemy_id: 0,
+      enemyId: 0,
       ascii: 65,
       type: 1,
-      screen_x: Math.floor(x),
-      screen_y: Math.floor(y),
-      map_x: mapX,
-      map_y: mapY
+      screenX: Math.floor(x),
+      screenY: Math.floor(y),
+      mapX: mapX,
+      mapY: mapY
     });
   };
 

@@ -124,10 +124,7 @@ export function publishMqtt(topic: string, data: any): void {
     }
     console.log(`[MQTT Main] ✅ 消息验证通过`);
 
-    const message = MessageType.create(data);
-    console.log(`[MQTT Main] 📝 创建的消息对象:`, JSON.stringify(MessageType.toObject(message), null, 2));
-
-    const buffer = MessageType.encode(message).finish();
+    const buffer = MessageType.encode(data).finish();
     console.log(`[MQTT Main] 📝 编码后的 Buffer 长度: ${buffer.length} 字节`);
     console.log(`[MQTT Main] 📝 编码后的 Buffer (hex): ${Buffer.from(buffer).toString('hex')}`);
 
