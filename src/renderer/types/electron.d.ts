@@ -17,8 +17,12 @@ export interface ElectronAPI {
   mqtt: {
     connect: (server: string, port: number) => Promise<{ success: boolean; error?: string }>;
     disconnect: () => Promise<{ success: boolean; error?: string }>;
+    publish: (topic: string, data: any) => Promise<{ success: boolean; error?: string }>;
     onStatus: (callback: (status: string, error?: string) => void) => () => void;
     onMessage: (callback: (data: { topic: string; payload: number[] }) => void) => () => void;
+  };
+  app: {
+    quit: () => Promise<void>;
   };
 }
 

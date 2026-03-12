@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package rm_client_up;
+
+message RemoteControl {
+    int32 mouse_x = 1;
+    int32 mouse_y = 2;
+    int32 mouse_z = 3;
+    bool left_button_down = 4;
+    bool right_button_down = 5;
+    uint32 keyboard_value = 6;
+    bool mid_button_down = 7;
+    bytes data = 8;
+}
+
+message MapClickInfoNotify {
+    uint32 is_send_all = 1;
+    bytes robot_id = 2;
+    uint32 mode = 3;
+    uint32 enemy_id = 4;
+    uint32 ascii = 5;
+    uint32 type = 6;
+    uint32 screen_x = 7;
+    uint32 screen_y = 8;
+    float map_x = 9;
+    float map_y = 10;
+}
+
+message AssemblyCommand {
+    uint32 operation = 1;
+    uint32 difficulty = 2;
+}
+
+message RobotPerformanceSelectionCommand {
+    uint32 shooter = 1;
+    uint32 chassis = 2;
+}
+
+message HeroDeployModeEventCommand {
+    uint32 mode = 1;
+}
+
+message RuneActivateCommand {
+    uint32 activate = 1;
+}
+
+message DartCommand {
+    uint32 target_id = 1;
+    bool open = 2;
+}
+
+message GuardCtrlCommand {
+    uint32 command_id = 1;
+}
+
+message AirSupportCommand {
+    uint32 command_id = 1;
+}

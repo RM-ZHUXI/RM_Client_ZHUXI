@@ -8,29 +8,21 @@ if (process.platform === 'win32') {
   process.stdout.setDefaultEncoding('utf8');
 }
 
-declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
-declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
-
 let mainWindow: BrowserWindow | null = null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 800,
+    fullscreen: true,
+    frame: false,
     webPreferences: {
-      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      preload: path.join(__dirname, '../preload/index.js'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
     },
   });
 
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-
-  // 开发环境下打开开发者工具
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.webContents.openDevTools();
-  }
+  mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
 
   mainWindow.on('closed', () => {
     mainWindow = null;

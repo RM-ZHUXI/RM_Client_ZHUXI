@@ -12,11 +12,12 @@
 
 ## 技术栈
 
-- **主框架**: Electron + Electron Forge
+- **主框架**: Electron + electron-builder
+- **打包工具**: Webpack 5
 - **前端**: React 19 + TypeScript
 - **状态管理**: Zustand
 - **数据通信**:
-  - MQTT: mqtt.js (渲染进程)
+  - MQTT: mqtt.js (主进程)
   - UDP: Node.js dgram (主进程)
 - **数据解析**: protobuf.js
 - **进程通信**: IPC (contextBridge + preload)
@@ -40,17 +41,22 @@ npm install
 npm start
 ```
 
-这将启动 Electron Forge 的开发服务器，支持热重载。
+这将编译代码并启动 Electron 应用。
 
 ### 3. 打包构建
 
 构建 Windows 安装包：
 
 ```bash
-npm run make
+npm run dist:win
 ```
 
-生成的安装包位于 `out/make` 目录。
+生成的安装包位于 `out` 目录：
+- `RoboMaster 2026 Client-Setup-1.0.0.exe` - NSIS 安装程序
+  - 支持自定义安装路径
+  - 自动创建桌面和开始菜单快捷方式
+- `RoboMaster 2026 Client-1.0.0-win.zip` - ZIP 便携版
+  - 解压即用，无需安装
 
 ## 使用说明
 
@@ -83,7 +89,9 @@ robomaster-client-native/
 │   ├── main/                    # 主进程
 │   │   ├── index.ts             # 主入口
 │   │   ├── udpVideoServer.ts    # UDP 视频服务器
-│   │   └── ipcHandlers.ts       # IPC 处理器
+│   │   ├── mqttService.ts       # MQTT 客户端
+│   │   ├── ipcHandlers.ts       # IPC 处理器
+│   │   └── configStore.ts       # 配置存储
 │   ├── preload/                 # 预加载脚本
 │   │   └── index.ts             # 安全 API 暴露
 │   └── renderer/                # 渲染进程 (React)
@@ -103,10 +111,17 @@ robomaster-client-native/
 │       ├── index.tsx
 │       └── index.css
 ├── resources/                   # 静态资源
-│   └── messages.proto           # Protobuf 定义文件
+│   ├── messages.proto           # Protobuf 定义文件
+│   └── ZHUXI.ico                # 应用图标
+├── dist/                        # 编译输出
+│   ├── main/
+│   ├── preload/
+│   └── renderer/
 ├── package.json
 ├── tsconfig.json
-├── forge.config.ts              # Electron Forge 配置
+├── webpack.main.config.ts       # Main 进程 webpack 配置
+├── webpack.preload.config.ts    # Preload webpack 配置
+├── webpack.renderer.config.ts   # Renderer 进程 webpack 配置
 └── README.md
 ```
 
@@ -174,4 +189,4 @@ MIT
 
 - [SharkDataSever](https://github.com/JNU-SHARK/SharkDataSever)
 - [Electron 官方文档](https://www.electronjs.org/docs)
-- [Electron Forge 文档](https://www.electronforge.io/)
+- [electron-builder 文档](https://www.electron.build/)

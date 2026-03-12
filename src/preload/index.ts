@@ -34,6 +34,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   mqtt: {
     connect: (server: string, port: number) => ipcRenderer.invoke('mqtt:connect', server, port),
     disconnect: () => ipcRenderer.invoke('mqtt:disconnect'),
+    publish: (topic: string, data: any) => ipcRenderer.invoke('mqtt:publish', topic, data),
     onStatus: (callback: (status: string, error?: string) => void) => {
       const listener = (_event: Electron.IpcRendererEvent, status: string, error?: string) => callback(status, error);
       ipcRenderer.on('mqtt:status', listener);
@@ -44,5 +45,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.on('mqtt:message', listener);
       return () => ipcRenderer.removeListener('mqtt:message', listener);
     },
+  },
+
+  // 应用控制 API
+  app: {
+    quit: () => ipcRenderer.invoke('app:quit'),
   },
 });
