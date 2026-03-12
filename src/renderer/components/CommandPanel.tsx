@@ -4,16 +4,23 @@ import { useAppStore } from '../store/appStore';
 interface CommandPanelProps {
   visible: boolean;
   onClose: () => void;
+  onRemoteEnabledChange?: (enabled: boolean) => void;
 }
 
-const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose }) => {
+const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose, onRemoteEnabledChange }) => {
   const { mqttStatus } = useAppStore();
   const [showMap, setShowMap] = useState(false);
 
   // RemoteControl state
   const [remoteEnabled, setRemoteEnabled] = useState(false);
+  const [cursorVisible, setCursorVisible] = useState(true);
   const mouseState = useRef({ x: 0, y: 0, z: 0, left: false, right: false, mid: false });
   const keyboardState = useRef(0);
+
+  // 通知父组件键鼠模式状态变化
+  useEffect(() => {
+    onRemoteEnabledChange?.(remoteEnabled);
+  }, [remoteEnabled, onRemoteEnabledChange]);
 
   // Other commands state
   const [assemblyOp, setAssemblyOp] = useState(1);
@@ -62,9 +69,23 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose }) => {
     };
   }, [remoteEnabled, mqttStatus]);
 
+  // 监听 cursorVisible 变化，更新鼠标显示
+  useEffect(() => {
+    if (remoteEnabled) {
+      document.body.style.cursor = cursorVisible ? 'default' : 'none';
+    }
+  }, [cursorVisible, remoteEnabled]);
+
   // Mouse and keyboard listeners
   useEffect(() => {
-    if (!remoteEnabled) return;
+    if (!remoteEnabled) {
+      document.body.style.cursor = 'default';
+      return;
+    }
+
+    // 进入键鼠模式时隐藏鼠标
+    setCursorVisible(false);
+    document.body.style.cursor = 'none';
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseState.current.x = e.movementX;
@@ -88,6 +109,20 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose }) => {
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Esc 退出键鼠模式
+      if (e.key === 'Escape') {
+        setRemoteEnabled(false);
+        e.preventDefault();
+        return;
+      }
+
+      // Ctrl+Shift+P 切换鼠标显示
+      if (e.ctrlKey && e.shiftKey && e.key === 'P') {
+        setCursorVisible(prev => !prev);
+        e.preventDefault();
+        return;
+      }
+
       const keyMap: Record<string, number> = {
         'w': 1, 's': 2, 'a': 4, 'd': 8,
         'Shift': 16, 'Control': 32, 'q': 64, 'e': 128,
@@ -115,6 +150,9 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose }) => {
     window.addEventListener('keyup', handleKeyUp);
 
     return () => {
+      console.log('[RemoteControl] 🛑 停止监听器');
+      setCursorVisible(true);
+      document.body.style.cursor = 'default'; // 退出时恢复鼠标
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);

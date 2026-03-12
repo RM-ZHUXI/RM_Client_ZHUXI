@@ -7,16 +7,17 @@ const App: React.FC = () => {
   const [showControlPanel, setShowControlPanel] = useState(false);
   const [showCommandPanel, setShowCommandPanel] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
+  const [remoteControlActive, setRemoteControlActive] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && !remoteControlActive) {
         setShowExitDialog(true);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [remoteControlActive]);
 
   const handleExit = () => {
     window.electronAPI.app.quit();
@@ -27,14 +28,18 @@ const App: React.FC = () => {
       <VideoArea />
       <div
         style={styles.leftTrigger}
-        onMouseEnter={() => setShowControlPanel(true)}
+        onMouseEnter={() => !remoteControlActive && setShowControlPanel(true)}
       />
       <div
         style={styles.rightTrigger}
-        onMouseEnter={() => setShowCommandPanel(true)}
+        onMouseEnter={() => !remoteControlActive && setShowCommandPanel(true)}
       />
       <ControlPanel visible={showControlPanel} onClose={() => setShowControlPanel(false)} />
-      <CommandPanel visible={showCommandPanel} onClose={() => setShowCommandPanel(false)} />
+      <CommandPanel
+        visible={showCommandPanel}
+        onClose={() => setShowCommandPanel(false)}
+        onRemoteEnabledChange={setRemoteControlActive}
+      />
 
       {showExitDialog && (
         <div style={styles.overlay}>
