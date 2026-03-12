@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import VideoArea from './components/VideoArea';
 import ControlPanel from './components/ControlPanel';
-import CommandPanel from './components/CommandPanel';
+import CommandPanel, { MapOverlay } from './components/CommandPanel';
 
 const App: React.FC = () => {
   const [showControlPanel, setShowControlPanel] = useState(false);
   const [showCommandPanel, setShowCommandPanel] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [remoteControlActive, setRemoteControlActive] = useState(false);
+  const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -21,6 +22,14 @@ const App: React.FC = () => {
 
   const handleExit = () => {
     window.electronAPI.app.quit();
+  };
+
+  const sendCommand = async (topic: string, data: any) => {
+    try {
+      await window.electronAPI.mqtt.publish(topic, data);
+    } catch (err) {
+      console.error('发送失败:', err);
+    }
   };
 
   return (
@@ -39,7 +48,13 @@ const App: React.FC = () => {
         visible={showCommandPanel}
         onClose={() => setShowCommandPanel(false)}
         onRemoteEnabledChange={setRemoteControlActive}
+        onMapToggle={setShowMap}
+        mapVisible={showMap}
       />
+
+      {showMap && (
+        <MapOverlay onClose={() => setShowMap(false)} onSend={sendCommand} />
+      )}
 
       {showExitDialog && (
         <div style={styles.overlay}>

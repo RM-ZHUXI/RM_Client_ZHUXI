@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAppStore } from '../store/appStore';
+import mapImage from '../../../resources/map.png';
 
 interface CommandPanelProps {
   visible: boolean;
   onClose: () => void;
   onRemoteEnabledChange?: (enabled: boolean) => void;
+  onMapToggle?: (show: boolean) => void;
+  mapVisible?: boolean;
 }
 
-const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose, onRemoteEnabledChange }) => {
+const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose, onRemoteEnabledChange, onMapToggle, mapVisible }) => {
   const { mqttStatus } = useAppStore();
   const [showMap, setShowMap] = useState(false);
 
@@ -21,6 +24,18 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose, onRemoteE
   useEffect(() => {
     onRemoteEnabledChange?.(remoteEnabled);
   }, [remoteEnabled, onRemoteEnabledChange]);
+
+  // 通知父组件地图状态变化
+  useEffect(() => {
+    onMapToggle?.(showMap);
+  }, [showMap, onMapToggle]);
+
+  // 同步父组件的地图状态
+  useEffect(() => {
+    if (mapVisible !== undefined && mapVisible !== showMap) {
+      setShowMap(mapVisible);
+    }
+  }, [mapVisible]);
 
   // Other commands state
   const [assemblyOp, setAssemblyOp] = useState(1);
@@ -353,29 +368,22 @@ const CommandPanel: React.FC<CommandPanelProps> = ({ visible, onClose, onRemoteE
           </button>
         </div>
       </div>
-
-      {/* Map overlay */}
-      {showMap && (
-        <MapOverlay onClose={() => setShowMap(false)} onSend={sendCommand} />
-      )}
     </div>
   );
 };
 
 // Map overlay component
 const MapOverlay: React.FC<{ onClose: () => void; onSend: (topic: string, data: any) => void }> = ({ onClose, onSend }) => {
-  const [mapImage, setMapImage] = useState<string>('');
-
-  useEffect(() => {
-    // Try to load map image
-    const img = 'resources/map.png';
-    setMapImage(img);
-  }, []);
+  const [clickPos, setClickPos] = useState<{ x: number; y: number } | null>(null);
 
   const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+
+    // 显示点击反馈
+    setClickPos({ x, y });
+    setTimeout(() => setClickPos(null), 500);
 
     // Convert to map coordinates (example: 28m x 15m field)
     const mapX = (x / rect.width) * 28;
@@ -412,6 +420,22 @@ const MapOverlay: React.FC<{ onClose: () => void; onSend: (topic: string, data: 
           onClick={handleMapClick}
         >
           {!mapImage && <div style={styles.mapPlaceholder}>点击此处发送标记</div>}
+          {clickPos && (
+            <div
+              style={{
+                position: 'absolute',
+                left: clickPos.x,
+                top: clickPos.y,
+                width: '20px',
+                height: '20px',
+                borderRadius: '50%',
+                border: '2px solid #00ff00',
+                transform: 'translate(-50%, -50%)',
+                animation: 'pulse 0.5s ease-out',
+                pointerEvents: 'none',
+              }}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -546,6 +570,7 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: '15px',
   },
   mapArea: {
+    position: 'relative',
     width: '700px',
     height: '400px',
     backgroundSize: 'contain',
@@ -565,3 +590,4 @@ const styles: Record<string, React.CSSProperties> = {
 };
 
 export default CommandPanel;
+export { MapOverlay };
