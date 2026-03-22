@@ -1,7 +1,7 @@
 {
   "name": "robomaster-client-native",
   "productName": "RoboMaster 2026 Client",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "RoboMaster 2026 客户端 - 用于对接 SharkDataSever 服务端",
   "main": "dist/main/index.js",
   "private": true,
@@ -43,10 +43,7 @@
     }
   },
   "keywords": [],
-  "author": {
-    "name": "Your Name",
-    "email": "you@example.com"
-  },
+  "author": "RM-ZHUXI",
   "license": "MIT",
   "devDependencies": {
     "@electron/fuses": "^1.8.0",
