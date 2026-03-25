@@ -52,10 +52,10 @@ npm run dist:win
 ```
 
 生成的安装包位于 `out` 目录：
-- `RoboMaster 2026 Client-Setup-1.0.0.exe` - NSIS 安装程序
+- `RoboMaster 2026 Client-Setup-1.2.0.exe` - NSIS 安装程序
   - 支持自定义安装路径
   - 自动创建桌面和开始菜单快捷方式
-- `RoboMaster 2026 Client-1.0.0-win.zip` - ZIP 便携版
+- `RoboMaster 2026 Client-1.2.0-win.zip` - ZIP 便携版
   - 解压即用，无需安装
 
 ## 使用说明
